@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { App as SendbirdApp } from '@sendbird/uikit-react';
 import '@sendbird/uikit-react/dist/index.css';
-import useNotifications, { MessageSendEvent } from './hooks/useNotifications';
+import useNotifications from './hooks/useNotifications';
+import type { MessageSendEvent } from './hooks/useNotifications';
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 
