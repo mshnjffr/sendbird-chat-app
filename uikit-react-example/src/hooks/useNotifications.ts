@@ -12,7 +12,7 @@ interface GroupChannelCreateEvent {
   data: { author: string; work: string; year: string };
 }
 
-interface MessageSendEvent {
+export interface MessageSendEvent {
   senderId: string;
   senderNickname: string;
   message: string;
@@ -36,7 +36,10 @@ const notify = (title: string, body: string): void => {
   }
 };
 
-const useNotifications = (currentUserId: string): void => {
+const useNotifications = (
+  currentUserId: string,
+  onMessageSend?: (event: MessageSendEvent) => void,
+): void => {
   useEffect(() => {
     requestPermission();
 
@@ -65,12 +68,11 @@ const useNotifications = (currentUserId: string): void => {
 
     source.addEventListener('message_send', (e) => {
       console.log('[sse] message_send event received:', e.data);
-      const { senderId, senderNickname, message, channelName } = JSON.parse(e.data) as MessageSendEvent;
+      const event = JSON.parse(e.data) as MessageSendEvent;
 
-      // Only notify for messages from other users, not the logged-in user's own messages
-      if (senderId === currentUserId) return;
+      if (event.senderId === currentUserId) return;
 
-      notify(`New message in ${channelName}`, `${senderNickname}: ${message}`);
+      onMessageSend?.(event);
     });
 
     return () => source.close();
