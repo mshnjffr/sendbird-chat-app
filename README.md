@@ -18,14 +18,18 @@ npm install
 
 ### 2. Configure Sendbird credentials
 
-In `src/App.tsx`, update the following props on the `<SendbirdApp />` component with your credentials:
+Copy the example env file and fill in your credentials:
 
-```tsx
-<SendbirdApp
-  appId="YOUR_APP_ID"
-  userId="YOUR_USER_ID"
-  accessToken="YOUR_ACCESS_TOKEN"
-/>
+```bash
+cp .env.example .env
+```
+
+Then update `.env` with your values:
+
+```env
+VITE_SENDBIRD_APP_ID=your_app_id_here
+VITE_SENDBIRD_USER_ID=your_user_id_here
+VITE_SENDBIRD_ACCESS_TOKEN=your_access_token_here
 ```
 
 You can find your `appId` in the [Sendbird Dashboard](https://dashboard.sendbird.com).
