@@ -12,6 +12,14 @@ interface GroupChannelCreateEvent {
   data: { author: string; work: string; year: string };
 }
 
+interface MessageSendEvent {
+  senderId: string;
+  senderNickname: string;
+  message: string;
+  channelName: string;
+  channelUrl: string;
+}
+
 const requestPermission = async (): Promise<void> => {
   if (Notification.permission === 'default') {
     await Notification.requestPermission();
@@ -33,6 +41,7 @@ const useNotifications = (): void => {
     requestPermission();
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const currentUserId = import.meta.env.VITE_SENDBIRD_USER_ID;
     console.log('[sse] connecting to:', `${backendUrl}/events`);
 
     const source = new EventSource(`${backendUrl}/events`);
@@ -53,6 +62,16 @@ const useNotifications = (): void => {
         `New channel created: ${channelName}`,
         `${message}\n— ${data.author}, ${data.work} (${data.year})`
       );
+    });
+
+    source.addEventListener('message_send', (e) => {
+      console.log('[sse] message_send event received:', e.data);
+      const { senderId, senderNickname, message, channelName } = JSON.parse(e.data) as MessageSendEvent;
+
+      // Only notify for messages from other users, not the logged-in user's own messages
+      if (senderId === currentUserId) return;
+
+      notify(`New message in ${channelName}`, `${senderNickname}: ${message}`);
     });
 
     return () => source.close();
