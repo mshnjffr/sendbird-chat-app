@@ -36,12 +36,11 @@ const notify = (title: string, body: string): void => {
   }
 };
 
-const useNotifications = (): void => {
+const useNotifications = (currentUserId: string): void => {
   useEffect(() => {
     requestPermission();
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-    const currentUserId = import.meta.env.VITE_SENDBIRD_USER_ID;
     console.log('[sse] connecting to:', `${backendUrl}/events`);
 
     const source = new EventSource(`${backendUrl}/events`);
@@ -75,7 +74,7 @@ const useNotifications = (): void => {
     });
 
     return () => source.close();
-  }, []);
+  }, [currentUserId]);
 };
 
 export default useNotifications;
