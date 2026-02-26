@@ -100,7 +100,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
 function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id: number) => void }) {
   return (
     <div style={{
-      position: 'fixed', bottom: '1.5rem', right: '1.5rem',
+      position: 'fixed', top: '1.5rem', right: '1.5rem',
       display: 'flex', flexDirection: 'column', gap: '0.6rem',
       zIndex: 9999, pointerEvents: 'none',
     }}>
