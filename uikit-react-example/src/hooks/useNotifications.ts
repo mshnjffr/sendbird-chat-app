@@ -6,6 +6,7 @@
 import { useEffect, useRef } from 'react';
 
 interface ProfanityEvent {
+  senderId: string;
   sender: string;
   message: string;
   channelName: string;
@@ -60,7 +61,8 @@ const useNotifications = (
     const source = new EventSource(`${import.meta.env.VITE_BACKEND_URL}/events`);
 
     source.addEventListener('profanity_filter', (e) => {
-      const { sender, message, channelName } = JSON.parse(e.data) as ProfanityEvent;
+      const { senderId, sender, message, channelName } = JSON.parse(e.data) as ProfanityEvent;
+      if (senderId !== currentUserId) return;
       notify(`Profanity detected in ${channelName}`, `${sender}: ${message}`);
     });
 
