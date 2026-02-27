@@ -1,3 +1,10 @@
+/**
+ * Root application component.
+ *
+ * Renders a login screen on first load. Once a user ID is entered, mounts the
+ * Sendbird UIKit chat interface alongside an in-app toast notification system
+ * that listens for real-time message events via the useNotifications hook.
+ */
 import { useState, useCallback } from 'react';
 import { App as SendbirdApp } from '@sendbird/uikit-react';
 import '@sendbird/uikit-react/dist/index.css';

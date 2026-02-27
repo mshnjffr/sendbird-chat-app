@@ -1,3 +1,8 @@
+/**
+ * useNotifications hook
+ * Manages the SSE connection to the backend and handles all real-time
+ * notification events for the current user.
+ */
 import { useEffect, useRef } from 'react';
 
 interface ProfanityEvent {
