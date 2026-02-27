@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { App as SendbirdApp } from '@sendbird/uikit-react';
 import '@sendbird/uikit-react/dist/index.css';
 import useNotifications from './hooks/useNotifications';
@@ -54,8 +54,10 @@ interface Toast extends MessageSendEvent {
   exiting: boolean;
 }
 
-const TOAST_DURATION = 4000;
-const TOAST_EXIT_DURATION = 300;
+const TOAST_DURATION_MS = 4000;
+const TOAST_EXIT_DURATION_MS = 300;
+
+let toastIdCounter = 0;
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number) => void }) {
   return (
@@ -67,9 +69,10 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
         padding: '0.85rem 1rem', borderRadius: '10px',
         boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
         cursor: 'pointer', minWidth: '280px', maxWidth: '340px',
+        pointerEvents: 'auto',
         opacity: toast.exiting ? 0 : 1,
         transform: toast.exiting ? 'translateX(20px)' : 'translateX(0)',
-        transition: `opacity ${TOAST_EXIT_DURATION}ms ease, transform ${TOAST_EXIT_DURATION}ms ease`,
+        transition: `opacity ${TOAST_EXIT_DURATION_MS}ms ease, transform ${TOAST_EXIT_DURATION_MS}ms ease`,
       }}
     >
       <div style={{
@@ -105,9 +108,7 @@ function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
       zIndex: 9999, pointerEvents: 'none',
     }}>
       {toasts.map((t) => (
-        <div key={t.id} style={{ pointerEvents: 'auto' }}>
-          <ToastItem toast={t} onDismiss={onDismiss} />
-        </div>
+        <ToastItem key={t.id} toast={t} onDismiss={onDismiss} />
       ))}
     </div>
   );
@@ -115,24 +116,20 @@ function ToastContainer({ toasts, onDismiss }: { toasts: Toast[]; onDismiss: (id
 
 // ─── Chat ─────────────────────────────────────────────────────────────────────
 
-let toastIdCounter = 0;
-
 function Chat({ userId }: { userId: string }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const dismiss = useCallback((id: number) => {
-    setToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
-    );
+    setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, exiting: true } : t)));
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, TOAST_EXIT_DURATION);
+    }, TOAST_EXIT_DURATION_MS);
   }, []);
 
   const addToast = useCallback((event: MessageSendEvent) => {
     const id = ++toastIdCounter;
     setToasts((prev) => [...prev, { ...event, id, exiting: false }]);
-    setTimeout(() => dismiss(id), TOAST_DURATION);
+    setTimeout(() => dismiss(id), TOAST_DURATION_MS);
   }, [dismiss]);
 
   useNotifications(userId, addToast);
